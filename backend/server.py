@@ -1058,6 +1058,42 @@ async def get_all_users(request: Request, session_token: Optional[str] = Cookie(
     
     return users
 
+@api_router.post("/admin/invite-creator")
+async def invite_creator(
+    email: str = Form(...),
+    request: Request = None,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Send creator invitation email"""
+    admin = await require_role(request, "admin", session_token)
+    
+    # Store invitation in database
+    invitation_doc = {
+        "invitation_id": f"inv_{uuid.uuid4().hex[:12]}",
+        "email": email.lower(),
+        "invited_by": admin.user_id,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    # Check if already invited
+    existing = await db.creator_invitations.find_one({"email": email.lower()}, {"_id": 0})
+    if existing:
+        return {"message": "Creator already invited", "invitation": existing}
+    
+    await db.creator_invitations.insert_one(invitation_doc)
+    
+    return {"message": "Creator invitation sent", "invitation": invitation_doc}
+
+@api_router.get("/admin/invitations")
+async def list_invitations(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Get all creator invitations"""
+    admin = await require_role(request, "admin", session_token)
+    
+    invitations = await db.creator_invitations.find({}, {"_id": 0}).to_list(1000)
+    
+    return invitations
+
 # ============================================
 # WEBHOOK ENDPOINTS
 # ============================================
