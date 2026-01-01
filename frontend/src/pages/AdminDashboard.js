@@ -509,6 +509,161 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {/* PAYMENT SETTINGS TAB */}
+        {activeTab === 'payment' && (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: 'Unbounded, sans-serif' }}>
+              Payment Settings
+            </h2>
+
+            {/* Revenue Split Overview */}
+            <div className="glass-panel p-6 bg-gradient-to-r from-green-500/10 to-blue-500/10">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <span>💰</span>
+                <span>Revenue Split Model</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-black/30 rounded-lg p-4">
+                  <h4 className="text-lg font-bold text-green-400 mb-2">Creator Earnings (90%)</h4>
+                  <p className="text-gray-300 text-sm">Creators keep 90% of all sales revenue from their sample packs</p>
+                  <p className="text-2xl font-bold text-white mt-2">${stats?.creator_earnings?.toFixed(2) || '0.00'}</p>
+                  <p className="text-xs text-gray-400">Total paid to creators</p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-4">
+                  <h4 className="text-lg font-bold text-violet-400 mb-2">Platform Fee (10%)</h4>
+                  <p className="text-gray-300 text-sm">Platform takes 10% to cover hosting, processing, and development</p>
+                  <p className="text-2xl font-bold text-white mt-2">${stats?.platform_earnings?.toFixed(2) || '0.00'}</p>
+                  <p className="text-xs text-gray-400">Platform revenue</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Processing */}
+            <div className="glass-panel p-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>🔒</span>
+                <span>Payment Processing</span>
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg">
+                  <div>
+                    <h4 className="font-semibold">Stripe Integration</h4>
+                    <p className="text-sm text-gray-400">Secure payment processing for all transactions</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-green-400 text-sm font-semibold">Active</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg">
+                  <div>
+                    <h4 className="font-semibold">SSL Security</h4>
+                    <p className="text-sm text-gray-400">All payments encrypted and secure</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-green-400 text-sm font-semibold">Enabled</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Subscription Settings */}
+            <div className="glass-panel p-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>🔄</span>
+                <span>Subscription Plans</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-violet-500/20 to-purple-600/20 rounded-lg p-4">
+                  <h4 className="text-lg font-bold mb-2">Pro Plan</h4>
+                  <p className="text-3xl font-bold text-white mb-2">$9.99<span className="text-sm text-gray-400">/month</span></p>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• Unlimited downloads</li>
+                    <li>• Early access to new packs</li>
+                    <li>• Exclusive creator content</li>
+                    <li>• Commercial license included</li>
+                  </ul>
+                  <div className="mt-4 text-sm">
+                    <span className="text-gray-400">Active subscribers: </span>
+                    <span className="font-bold text-white">{stats?.total_subscriptions || 0}</span>
+                  </div>
+                </div>
+                <div className="bg-black/30 rounded-lg p-4">
+                  <h4 className="text-lg font-bold mb-2">Free Plan</h4>
+                  <p className="text-3xl font-bold text-white mb-2">$0<span className="text-sm text-gray-400">/month</span></p>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• Limited free downloads</li>
+                    <li>• Access to free sample packs</li>
+                    <li>• Basic community features</li>
+                    <li>• Personal use license</li>
+                  </ul>
+                  <div className="mt-4 text-sm">
+                    <span className="text-gray-400">Free users: </span>
+                    <span className="font-bold text-white">{allUsers?.filter(u => u.role === 'user').length || 0}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Payout Information */}
+            <div className="glass-panel p-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>📊</span>
+                <span>Creator Payouts</span>
+              </h3>
+              <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-lg p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <p className="text-gray-400 text-sm mb-2">Total Sales Revenue</p>
+                    <p className="text-3xl font-bold text-white">${stats?.total_revenue?.toFixed(2) || '0.00'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-sm mb-2">Creator Share (90%)</p>
+                    <p className="text-3xl font-bold text-green-400">${stats?.creator_earnings?.toFixed(2) || '0.00'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-sm mb-2">Platform Share (10%)</p>
+                    <p className="text-3xl font-bold text-violet-400">${stats?.platform_earnings?.toFixed(2) || '0.00'}</p>
+                  </div>
+                </div>
+                <div className="mt-6 p-4 bg-black/30 rounded-lg">
+                  <h4 className="font-semibold mb-2">💡 Payout Schedule</h4>
+                  <p className="text-sm text-gray-400">
+                    Creators are paid monthly via Stripe Connect. Payments are processed automatically on the 1st of each month for the previous month's earnings.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Analytics */}
+            <div className="glass-panel p-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>📈</span>
+                <span>Payment Analytics</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-black/30 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-white">{stats?.total_purchases || 0}</p>
+                  <p className="text-sm text-gray-400">Total Purchases</p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-blue-400">${(stats?.total_revenue / (stats?.total_purchases || 1))?.toFixed(2) || '0.00'}</p>
+                  <p className="text-sm text-gray-400">Avg. Order Value</p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-green-400">${stats?.subscription_revenue?.toFixed(2) || '0.00'}</p>
+                  <p className="text-sm text-gray-400">Subscription Revenue</p>
+                </div>
+                <div className="bg-black/30 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-violet-400">{((stats?.total_subscriptions / (stats?.total_users || 1)) * 100)?.toFixed(1) || '0.0'}%</p>
+                  <p className="text-sm text-gray-400">Conversion Rate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* UPLOAD PACK TAB */}
         {activeTab === 'upload' && (
           <div className="space-y-6 max-w-3xl">
