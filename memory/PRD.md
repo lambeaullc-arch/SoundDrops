@@ -45,10 +45,16 @@ Build a music sample marketplace called "SoundDrops" with:
 - [x] User promotion to creator
 - [x] ObjectId serialization fix for MongoDB
 - [x] Role-based routing (admin -> /admin-dashboard, creator -> /creator)
+- [x] **Cover art upload (required for every pack)**
+- [x] **Audio preview from homepage with play/pause**
+- [x] **Preview audio upload for ZIP files**
+- [x] **Pack detail page at /pack/:packId**
+- [x] **Navigation menu on admin dashboard**
+- [x] **View Pack button in content management**
+- [x] **Optimized database queries for production**
 
 ### In Progress 🔄
 - [ ] Admin redirect after login (needs user verification)
-- [ ] Waveform audio preview (wavesurfer.js configured, needs testing with actual files)
 
 ### Upcoming Tasks 📋
 - [ ] BPM/Key filtering in search
@@ -71,19 +77,21 @@ Build a music sample marketplace called "SoundDrops" with:
 ### Samples
 - `GET /api/samples` - List samples with filters
 - `GET /api/samples/{pack_id}` - Get single pack
+- `GET /api/samples/{pack_id}/cover` - Get cover image
+- `GET /api/samples/{pack_id}/preview` - Get preview audio
 - `GET /api/samples/{pack_id}/download` - Download pack
 
 ### Admin
 - `GET /api/admin/stats` - Platform statistics
 - `GET /api/admin/users` - All users (email collection)
-- `POST /api/admin/packs` - Upload pack
+- `POST /api/admin/packs` - Upload pack (with cover + preview)
 - `PUT /api/admin/packs/{pack_id}` - Edit pack
 - `DELETE /api/admin/packs/{pack_id}` - Delete pack
 - `POST /api/admin/invite-creator` - Invite creator
 - `POST /api/admin/users/{user_id}/promote` - Promote to creator
 
 ### Creator
-- `POST /api/creator/packs` - Upload pack
+- `POST /api/creator/packs` - Upload pack (with cover + preview)
 - `GET /api/creator/packs` - List own packs
 - `GET /api/creator/earnings` - Earnings summary
 
@@ -116,6 +124,8 @@ Build a music sample marketplace called "SoundDrops" with:
   "bpm": "int",
   "key": "string",
   "file_type": "audio|zip",
+  "cover_image_path": "string",
+  "preview_audio_path": "string",
   "creator_id": "string",
   "created_at": "datetime"
 }
@@ -133,8 +143,9 @@ Build a music sample marketplace called "SoundDrops" with:
 - REACT_APP_BACKEND_URL
 
 ## Testing Status
-- Backend: 14/14 tests passing
-- Frontend: Functional (minor lint warnings)
+- Backend: All endpoints working
+- Frontend: Functional
+- Deployment: Ready (environment files configured)
 - Last tested: January 1, 2026
 
 ## Known Issues
@@ -145,4 +156,6 @@ Build a music sample marketplace called "SoundDrops" with:
 - `/app/backend/server.py` - Main backend
 - `/app/frontend/src/pages/AdminDashboard.js` - Admin UI
 - `/app/frontend/src/pages/Creator.js` - Creator UI
+- `/app/frontend/src/pages/PackDetail.js` - Pack detail page
+- `/app/frontend/src/pages/Home.js` - Homepage with audio preview
 - `/app/frontend/src/utils/api.js` - API functions
