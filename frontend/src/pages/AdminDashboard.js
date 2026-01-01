@@ -124,6 +124,79 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleToggleFeatured = async (packId, currentStatus) => {
+    try {
+      const formData = new FormData();
+      formData.append('is_featured', !currentStatus);
+      await adminAPI.markFeatured(packId, formData);
+      alert(`Pack ${!currentStatus ? 'marked as featured' : 'removed from featured'}!`);
+      fetchAllData();
+    } catch (error) {
+      alert('Failed to update: ' + error.message);
+    }
+  };
+
+  const handleToggleSyncReady = async (packId, currentStatus, currentSyncType) => {
+    if (!currentStatus) {
+      // Marking as sync-ready, ask for type
+      const syncType = prompt('Select Sync Type:\n1. Sports\n2. Film\n3. Cinematic\n4. Broadcast\n\nEnter the type name:');
+      if (!syncType) return;
+      
+      const validTypes = ['Sports', 'Film', 'Cinematic', 'Broadcast'];
+      const selectedType = validTypes.find(t => t.toLowerCase() === syncType.toLowerCase());
+      
+      if (!selectedType) {
+        alert('Invalid sync type. Please enter: Sports, Film, Cinematic, or Broadcast');
+        return;
+      }
+      
+      try {
+        const formData = new FormData();
+        formData.append('is_sync_ready', true);
+        formData.append('sync_type', selectedType);
+        await adminAPI.markSyncReady(packId, formData);
+        alert(`Pack marked as sync-ready (${selectedType})!`);
+        fetchAllData();
+      } catch (error) {
+        alert('Failed to update: ' + error.message);
+      }
+    } else {
+      // Unmarking as sync-ready
+      try {
+        const formData = new FormData();
+        formData.append('is_sync_ready', false);
+        await adminAPI.markSyncReady(packId, formData);
+        alert('Pack removed from sync-ready!');
+        fetchAllData();
+      } catch (error) {
+        alert('Failed to update: ' + error.message);
+      }
+    }
+  };
+
+  const handleUpdateMetadata = async (packId, currentBpm, currentKey) => {
+    const bpmInput = prompt('Enter BPM (leave empty to skip):', currentBpm || '');
+    const keyInput = prompt('Enter Key (e.g., Am, C, F#) (leave empty to skip):', currentKey || '');
+    
+    if (bpmInput === null && keyInput === null) return; // User cancelled
+    
+    try {
+      const formData = new FormData();
+      if (bpmInput && bpmInput.trim()) {
+        formData.append('bpm', parseInt(bpmInput));
+      }
+      if (keyInput && keyInput.trim()) {
+        formData.append('key', keyInput.trim());
+      }
+      
+      await adminAPI.updateMetadata(packId, formData);
+      alert('Metadata updated!');
+      fetchAllData();
+    } catch (error) {
+      alert('Failed to update metadata: ' + error.message);
+    }
+  };
+
   const handlePromoteToCreator = async (userId, userName) => {
     if (!window.confirm(`Promote ${userName} to creator?`)) return;
     
