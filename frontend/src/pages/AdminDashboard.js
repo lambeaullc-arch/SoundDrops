@@ -1125,6 +1125,31 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">BPM (optional)</label>
+                    <input
+                      type="number"
+                      placeholder="120"
+                      value={uploadForm.bpm}
+                      onChange={(e) => setUploadForm({ ...uploadForm, bpm: e.target.value })}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                      data-testid="upload-bpm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Key (optional)</label>
+                    <input
+                      type="text"
+                      placeholder="Am, C, F#"
+                      value={uploadForm.key}
+                      onChange={(e) => setUploadForm({ ...uploadForm, key: e.target.value })}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                      data-testid="upload-key"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-semibold mb-2">Tags (comma separated)</label>
                   <input
@@ -1137,7 +1162,7 @@ const AdminDashboard = () => {
                   />
                 </div>
 
-                <div>
+                <div className="space-y-3">
                   <label className="flex items-center gap-3 cursor-pointer glass-panel p-4 rounded-lg hover:bg-white/10 transition">
                     <input
                       type="checkbox"
@@ -1148,18 +1173,59 @@ const AdminDashboard = () => {
                     />
                     <span className="font-semibold">🎁 Mark as Free Pack</span>
                   </label>
+                  
+                  <label className="flex items-center gap-3 cursor-pointer glass-panel p-4 rounded-lg hover:bg-white/10 transition">
+                    <input
+                      type="checkbox"
+                      checked={uploadForm.isFeatured}
+                      onChange={(e) => setUploadForm({ ...uploadForm, isFeatured: e.target.checked })}
+                      className="w-5 h-5"
+                      data-testid="upload-is-featured"
+                    />
+                    <span className="font-semibold">⭐ Mark as Featured Pack</span>
+                  </label>
+                  
+                  <label className="flex items-center gap-3 cursor-pointer glass-panel p-4 rounded-lg hover:bg-white/10 transition">
+                    <input
+                      type="checkbox"
+                      checked={uploadForm.isSyncReady}
+                      onChange={(e) => setUploadForm({ ...uploadForm, isSyncReady: e.target.checked })}
+                      className="w-5 h-5"
+                      data-testid="upload-is-sync-ready"
+                    />
+                    <span className="font-semibold">🎬 Mark as Sync Ready (Broadcast Quality)</span>
+                  </label>
+                  
+                  {uploadForm.isSyncReady && (
+                    <div className="ml-8">
+                      <label className="block text-sm font-semibold mb-2">Sync Type</label>
+                      <select
+                        value={uploadForm.syncType}
+                        onChange={(e) => setUploadForm({ ...uploadForm, syncType: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                        data-testid="upload-sync-type"
+                      >
+                        <option value="">Select Type</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Film">Film</option>
+                        <option value="Cinematic">Cinematic</option>
+                        <option value="Broadcast">Broadcast</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Audio File</label>
+                  <label className="block text-sm font-semibold mb-2">Audio File or ZIP Archive</label>
                   <input
                     type="file"
-                    accept="audio/*"
+                    accept="audio/*,.zip"
                     onChange={(e) => setUploadForm({ ...uploadForm, audioFile: e.target.files[0] })}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
                     required
                     data-testid="upload-audio-file"
                   />
+                  <p className="text-sm text-gray-400 mt-2">Supports MP3, WAV, and ZIP files containing multiple samples</p>
                 </div>
 
                 <button type="submit" className="w-full btn-primary text-lg py-4 mt-6" data-testid="submit-upload">
