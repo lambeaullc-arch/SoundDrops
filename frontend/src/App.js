@@ -7,6 +7,7 @@ import Favorites from './pages/Favorites';
 import Collections from './pages/Collections';
 import Creator from './pages/Creator';
 import Admin from './pages/Admin';
+import AdminDashboard from './pages/AdminDashboard';
 import AuthCallback from './components/auth/AuthCallback';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import './App.css';
@@ -60,6 +61,11 @@ function AppRouter() {
             <Admin />
           </ProtectedRoute>
         } 
+      />
+
+      <Route 
+        path="/admin-dashboard" 
+        element={<AdminDashboard />}
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />
