@@ -89,3 +89,9 @@ android-sdk/ -e
 # Environment files
 *.env
 *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+backend/zip_files/pack_1f2a035918f8.zip
+backend/zip_files/pack_741018d7037c.zip
