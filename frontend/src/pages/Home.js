@@ -58,11 +58,11 @@ const Home = () => {
               🎧 Browse Samples
             </Link>
             <Link 
-              to="/login" 
+              to="/register" 
               className="btn-secondary text-lg px-8 py-4 inline-block"
               data-testid="get-started-button"
             >
-              Get Started
+              Get Started Free
             </Link>
           </div>
         </div>
