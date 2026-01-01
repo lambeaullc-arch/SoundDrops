@@ -1049,6 +1049,15 @@ async def get_admin_stats(request: Request, session_token: Optional[str] = Cooki
         "creator_earnings": creator_earnings
     }
 
+@api_router.get("/admin/users")
+async def get_all_users(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Get all registered users with their emails"""
+    admin = await require_role(request, "admin", session_token)
+    
+    users = await db.users.find({}, {"_id": 0, "user_id": 1, "email": 1, "name": 1, "role": 1, "created_at": 1}).to_list(10000)
+    
+    return users
+
 # ============================================
 # WEBHOOK ENDPOINTS
 # ============================================
