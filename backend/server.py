@@ -807,7 +807,7 @@ async def create_collection(
     }
     await db.collections.insert_one(collection_doc)
     
-    return collection_doc
+    return serialize_doc(collection_doc)
 
 @api_router.get("/collections")
 async def list_collections(request: Request, session_token: Optional[str] = Cookie(None)):
