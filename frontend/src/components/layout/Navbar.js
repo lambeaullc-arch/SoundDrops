@@ -49,6 +49,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center space-x-6">
           <Link to="/browse" className="text-gray-300 hover:text-white transition" data-testid="nav-browse">Browse</Link>
+          <Link to="/sync" className="text-gray-300 hover:text-white transition" data-testid="nav-sync">Sync Ready</Link>
           {user && (
             <>
               <Link to="/favorites" className="text-gray-300 hover:text-white transition" data-testid="nav-favorites">Favorites</Link>
