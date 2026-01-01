@@ -101,7 +101,9 @@ const Creator = () => {
         isFeatured: false,
         isSyncReady: false,
         syncType: '',
-        audioFile: null 
+        audioFile: null,
+        coverImage: null,
+        previewAudio: null
       });
       alert('Pack uploaded successfully!');
       fetchData();
