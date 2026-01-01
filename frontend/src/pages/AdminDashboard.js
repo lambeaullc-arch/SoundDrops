@@ -262,9 +262,28 @@ const AdminDashboard = () => {
               </div>
             </div>
 
+            <div className="glass-panel p-6 bg-gradient-to-r from-violet-500/10 to-purple-600/10 mb-6">
+              <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+                <span>💡</span>
+                <span>How to Add Creators (Invitation-Only)</span>
+              </h3>
+              <div className="space-y-2 text-gray-300">
+                <p>1. <strong>Manually invite creators</strong> - Share invite link or ask them to sign in</p>
+                <p>2. <strong>They sign in with Google</strong> - Creates their account as regular user</p>
+                <p>3. <strong>Approve them here</strong> - Change their role from user to creator</p>
+                <p>4. <strong>They get access</strong> - Can upload packs and earn 90% revenue</p>
+              </div>
+              <div className="mt-4 p-3 bg-black/30 rounded-lg">
+                <p className="text-sm text-gray-400">
+                  <strong>Note:</strong> Public creator applications are disabled. You control who becomes a creator through manual approval.
+                </p>
+              </div>
+            </div>
+
             {creators.length === 0 ? (
               <div className="glass-panel p-12 text-center">
-                <p className="text-xl text-gray-400">No pending creator applications</p>
+                <p className="text-xl text-gray-400 mb-4">No pending creator applications</p>
+                <p className="text-gray-500">Invite creators privately and approve them here once they sign up.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
