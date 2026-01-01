@@ -1,6 +1,28 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { samplesAPI } from '../utils/api';
 
 const Home = () => {
+  const [featuredPacks, setFeaturedPacks] = useState([]);
+  const [syncPacks, setSyncPacks] = useState([]);
+
+  useEffect(() => {
+    fetchFeatured();
+  }, []);
+
+  const fetchFeatured = async () => {
+    try {
+      const [featuredRes, syncRes] = await Promise.all([
+        samplesAPI.list({ featured_only: true, limit: 3 }),
+        samplesAPI.list({ sync_ready_only: true, limit: 3 })
+      ]);
+      setFeaturedPacks(featuredRes.data);
+      setSyncPacks(syncRes.data);
+    } catch (error) {
+      console.error('Failed to fetch featured content:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
