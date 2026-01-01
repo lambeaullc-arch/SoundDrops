@@ -7,13 +7,44 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone, timedelta
 import aiohttp
 import base64
 import shutil
+import zipfile
+from bson import ObjectId
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+
+
+# ============================================
+# HELPER: ObjectId Serialization
+# ============================================
+def serialize_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert MongoDB document to JSON-serializable dict by handling ObjectId"""
+    if doc is None:
+        return None
+    result = {}
+    for key, value in doc.items():
+        if key == "_id":
+            continue  # Skip _id field
+        elif isinstance(value, ObjectId):
+            result[key] = str(value)
+        elif isinstance(value, datetime):
+            result[key] = value.isoformat()
+        elif isinstance(value, dict):
+            result[key] = serialize_doc(value)
+        elif isinstance(value, list):
+            result[key] = [serialize_doc(item) if isinstance(item, dict) else (str(item) if isinstance(item, ObjectId) else item) for item in value]
+        else:
+            result[key] = value
+    return result
+
+
+def serialize_docs(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Convert list of MongoDB documents to JSON-serializable list"""
+    return [serialize_doc(doc) for doc in docs]
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -44,6 +75,10 @@ logger = logging.getLogger(__name__)
 # Audio files storage
 AUDIO_STORAGE_PATH = ROOT_DIR / "audio_files"
 AUDIO_STORAGE_PATH.mkdir(exist_ok=True)
+
+# ZIP files storage (for extracted content)
+ZIP_STORAGE_PATH = ROOT_DIR / "zip_files"
+ZIP_STORAGE_PATH.mkdir(exist_ok=True)
 
 # ============================================
 # PYDANTIC MODELS
