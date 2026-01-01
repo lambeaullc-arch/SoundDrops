@@ -53,11 +53,14 @@ const Navbar = () => {
             <>
               <Link to="/favorites" className="text-gray-300 hover:text-white transition" data-testid="nav-favorites">Favorites</Link>
               <Link to="/collections" className="text-gray-300 hover:text-white transition" data-testid="nav-collections">Collections</Link>
-              {(user.role === 'creator' || user.role === 'admin') && (
+              {(user.role === 'creator' && user.creator_approved) && (
                 <Link to="/creator" className="text-gray-300 hover:text-white transition" data-testid="nav-creator">Creator</Link>
               )}
               {user.role === 'admin' && (
-                <Link to="/admin" className="text-gray-300 hover:text-white transition" data-testid="nav-admin">Admin</Link>
+                <Link to="/creator" className="text-gray-300 hover:text-white transition" data-testid="nav-creator">Creator</Link>
+              )}
+              {user.role === 'admin' && (
+                <Link to="/admin-dashboard" className="text-gray-300 hover:text-white transition" data-testid="nav-admin">Admin</Link>
               )}
             </>
           )}
