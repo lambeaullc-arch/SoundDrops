@@ -24,11 +24,16 @@ const AuthCallback = () => {
 
         const response = await authAPI.createSession(sessionId);
         const user = response.data;
+        
+        console.log('Auth callback user:', user);
+        console.log('User role:', user.role);
 
         // Redirect admin users to admin dashboard
         if (user.role === 'admin') {
+          console.log('Redirecting to admin dashboard');
           navigate('/admin-dashboard', { replace: true });
         } else {
+          console.log('Redirecting to browse');
           navigate('/browse', { state: { user }, replace: true });
         }
       } catch (error) {
