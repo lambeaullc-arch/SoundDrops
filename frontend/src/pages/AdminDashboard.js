@@ -554,6 +554,132 @@ const AdminDashboard = () => {
               <p className="text-gray-400">Total Packs: <span className="text-2xl font-bold text-white ml-2">{allSamples.length}</span></p>
             </div>
 
+            {/* Edit Pack Modal */}
+            {editingPack && (
+              <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                <div className="glass-panel p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                  <h3 className="text-2xl font-bold mb-4">Edit Pack</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Title</label>
+                      <input
+                        type="text"
+                        value={editingPack.title}
+                        onChange={(e) => setEditingPack({...editingPack, title: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Description</label>
+                      <textarea
+                        value={editingPack.description}
+                        onChange={(e) => setEditingPack({...editingPack, description: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 h-20"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Price</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={editingPack.price}
+                          onChange={(e) => setEditingPack({...editingPack, price: parseFloat(e.target.value)})}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Category</label>
+                        <select
+                          value={editingPack.category}
+                          onChange={(e) => setEditingPack({...editingPack, category: e.target.value})}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                        >
+                          <option value="Drums">Drums</option>
+                          <option value="Bass">Bass</option>
+                          <option value="Synths">Synths</option>
+                          <option value="FX">FX</option>
+                          <option value="Vocals">Vocals</option>
+                          <option value="Loops">Loops</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">BPM</label>
+                        <input
+                          type="number"
+                          value={editingPack.bpm || ''}
+                          onChange={(e) => setEditingPack({...editingPack, bpm: e.target.value ? parseInt(e.target.value) : null})}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                          placeholder="120"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Key</label>
+                        <input
+                          type="text"
+                          value={editingPack.key || ''}
+                          onChange={(e) => setEditingPack({...editingPack, key: e.target.value})}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                          placeholder="Am, C, F#"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingPack.is_free}
+                          onChange={(e) => setEditingPack({...editingPack, is_free: e.target.checked, price: e.target.checked ? 0 : editingPack.price})}
+                          className="w-5 h-5"
+                        />
+                        <span>Free Pack</span>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingPack.is_featured}
+                          onChange={(e) => setEditingPack({...editingPack, is_featured: e.target.checked})}
+                          className="w-5 h-5"
+                        />
+                        <span>Featured Pack</span>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingPack.is_sync_ready}
+                          onChange={(e) => setEditingPack({...editingPack, is_sync_ready: e.target.checked})}
+                          className="w-5 h-5"
+                        />
+                        <span>Sync Ready</span>
+                      </label>
+                      {editingPack.is_sync_ready && (
+                        <div>
+                          <label className="block text-sm font-semibold mb-2">Sync Type</label>
+                          <select
+                            value={editingPack.sync_type || ''}
+                            onChange={(e) => setEditingPack({...editingPack, sync_type: e.target.value})}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                          >
+                            <option value="">Select Type</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Film">Film</option>
+                            <option value="Cinematic">Cinematic</option>
+                            <option value="Broadcast">Broadcast</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex gap-3 pt-4">
+                      <button onClick={handleSaveEdit} className="btn-primary flex-1">Save Changes</button>
+                      <button onClick={() => setEditingPack(null)} className="btn-secondary flex-1">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {allSamples.length === 0 ? (
               <div className="glass-panel p-12 text-center">
                 <p className="text-xl text-gray-400">No sample packs uploaded yet</p>
@@ -567,34 +693,76 @@ const AdminDashboard = () => {
                         <h3 className="text-lg font-bold mb-1">{pack.title}</h3>
                         <p className="text-sm text-gray-400">by {pack.creator_name}</p>
                       </div>
-                      {pack.is_free && (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold">
-                          FREE
-                        </span>
-                      )}
+                      <div className="flex gap-1 flex-wrap justify-end">
+                        {pack.is_free && (
+                          <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold">
+                            FREE
+                          </span>
+                        )}
+                        {pack.is_featured && (
+                          <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-semibold">
+                            FEATURED
+                          </span>
+                        )}
+                        {pack.is_sync_ready && (
+                          <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-semibold">
+                            SYNC
+                          </span>
+                        )}
+                      </div>
                     </div>
                     
                     <p className="text-sm text-gray-400 mb-3 line-clamp-2">{pack.description}</p>
                     
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-3">
                       <span className="px-3 py-1 bg-violet-500/20 rounded text-sm">{pack.category}</span>
                       <span className="text-lg font-bold">
                         {pack.is_free ? 'Free' : `$${pack.price}`}
                       </span>
                     </div>
 
+                    {(pack.bpm || pack.key) && (
+                      <div className="flex gap-2 mb-3 text-sm">
+                        {pack.bpm && <span className="px-2 py-1 bg-white/10 rounded">{pack.bpm} BPM</span>}
+                        {pack.key && <span className="px-2 py-1 bg-white/10 rounded">{pack.key}</span>}
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                       <span>📥 {pack.download_count} downloads</span>
                       <span>{(pack.file_size / 1024 / 1024).toFixed(1)} MB</span>
                     </div>
 
-                    <button
-                      onClick={() => handleToggleFree(pack.pack_id, pack.is_free)}
-                      className="w-full btn-secondary text-sm"
-                      data-testid="toggle-free-btn"
-                    >
-                      {pack.is_free ? '💰 Make Paid' : '🎁 Make Free'}
-                    </button>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => handleEditPack(pack)}
+                        className="btn-secondary text-sm"
+                        data-testid="edit-pack-btn"
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button
+                        onClick={() => handleToggleFeatured(pack.pack_id, pack.is_featured)}
+                        className={`text-sm rounded-lg py-2 ${pack.is_featured ? 'bg-yellow-500/20 text-yellow-400' : 'bg-white/5 text-gray-400'}`}
+                        data-testid="toggle-featured-btn"
+                      >
+                        ⭐ {pack.is_featured ? 'Unfeature' : 'Feature'}
+                      </button>
+                      <button
+                        onClick={() => handleToggleSyncReady(pack.pack_id, pack.is_sync_ready, pack.sync_type)}
+                        className={`text-sm rounded-lg py-2 ${pack.is_sync_ready ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-gray-400'}`}
+                        data-testid="toggle-sync-btn"
+                      >
+                        🎬 {pack.is_sync_ready ? 'Unsync' : 'Sync'}
+                      </button>
+                      <button
+                        onClick={() => handleDeletePack(pack.pack_id, pack.title)}
+                        className="text-sm rounded-lg py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30"
+                        data-testid="delete-pack-btn"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
