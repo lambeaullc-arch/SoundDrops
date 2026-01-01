@@ -11,14 +11,26 @@ const Browse = () => {
   const [search, setSearch] = useState('');
   const [subscription, setSubscription] = useState(null);
   const [selectedSample, setSelectedSample] = useState(null);
+  const [user, setUser] = useState(null);
 
   const categories = ['Drums', 'Bass', 'Synths', 'FX', 'Vocals', 'Loops'];
 
   useEffect(() => {
     fetchSamples();
     fetchSubscription();
+    fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, search]);
+
+  const fetchUser = async () => {
+    try {
+      const response = await authAPI.getMe();
+      setUser(response.data);
+    } catch (error) {
+      // User not logged in, that's fine
+      setUser(null);
+    }
+  };
 
   const fetchSamples = async () => {
     try {
