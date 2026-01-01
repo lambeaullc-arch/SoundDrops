@@ -300,21 +300,66 @@ const AdminDashboard = () => {
               </div>
             </div>
 
+            {/* Invite Creator Section */}
+            <div className="glass-panel p-6 bg-gradient-to-r from-violet-500/20 to-purple-600/20">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <span>✉️</span>
+                <span>Invite Creator</span>
+              </h3>
+              <form onSubmit={handleInviteCreator} className="flex gap-3">
+                <input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="creator@email.com"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                  data-testid="invite-email-input"
+                />
+                <button
+                  type="submit"
+                  className="btn-primary whitespace-nowrap"
+                  data-testid="send-invite-button"
+                >
+                  📧 Send Invite
+                </button>
+              </form>
+              <p className="text-sm text-gray-400 mt-3">
+                When they sign up with this email, they'll automatically become a creator with full access.
+              </p>
+            </div>
+
+            {/* Invited Creators */}
+            {invitations.length > 0 && (
+              <div className="glass-panel p-6">
+                <h3 className="text-xl font-bold mb-4">Pending Invitations ({invitations.filter(i => i.status === 'pending').length})</h3>
+                <div className="space-y-2">
+                  {invitations.filter(i => i.status === 'pending').map(inv => (
+                    <div key={inv.invitation_id} className="flex justify-between items-center p-3 bg-white/5 rounded-lg" data-testid="pending-invitation">
+                      <div>
+                        <p className="font-semibold">{inv.email}</p>
+                        <p className="text-xs text-gray-500">
+                          Invited {new Date(inv.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-semibold">
+                        Pending
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="glass-panel p-6 bg-gradient-to-r from-violet-500/10 to-purple-600/10 mb-6">
               <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
                 <span>💡</span>
-                <span>How to Add Creators (Invitation-Only)</span>
+                <span>How Creator Invitations Work</span>
               </h3>
               <div className="space-y-2 text-gray-300">
-                <p>1. <strong>Manually invite creators</strong> - Share invite link or ask them to sign in</p>
-                <p>2. <strong>They sign in with Google</strong> - Creates their account as regular user</p>
-                <p>3. <strong>Approve them here</strong> - Change their role from user to creator</p>
-                <p>4. <strong>They get access</strong> - Can upload packs and earn 90% revenue</p>
-              </div>
-              <div className="mt-4 p-3 bg-black/30 rounded-lg">
-                <p className="text-sm text-gray-400">
-                  <strong>Note:</strong> Public creator applications are disabled. You control who becomes a creator through manual approval.
-                </p>
+                <p>1. <strong>Enter creator's email</strong> and click "Send Invite"</p>
+                <p>2. <strong>They sign up</strong> using that email address</p>
+                <p>3. <strong>Automatically become creator</strong> with full dashboard access</p>
+                <p>4. <strong>Start uploading</strong> packs and earning 90% revenue immediately</p>
               </div>
             </div>
 
