@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import WaveformPlayer from '../components/audio/WaveformPlayer';
-import { samplesAPI, subscriptionAPI, purchaseAPI, favoritesAPI } from '../utils/api';
+import { samplesAPI, subscriptionAPI, purchaseAPI, favoritesAPI, authAPI } from '../utils/api';
 
 const Browse = () => {
   const [samples, setSamples] = useState([]);
