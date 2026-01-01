@@ -88,15 +88,16 @@ const Creator = () => {
         <div className="pt-24 pb-12 px-4">
           <div className="container mx-auto max-w-2xl text-center">
             <div className="glass-panel p-12">
+              <div className="text-6xl mb-6">🎨</div>
               <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'Unbounded, sans-serif' }}>
-                Become a Creator
+                Creator Access Required
               </h1>
-              <p className="text-gray-400 mb-8 text-lg">
-                Share your sounds with the world and earn 90% revenue on every sale!
+              <p className="text-gray-400 mb-6 text-lg">
+                Creator accounts are invitation-only. Contact the platform admin to request creator access.
               </p>
-              <button onClick={handleApply} className="btn-primary text-lg" data-testid="apply-creator-button">
-                Apply Now
-              </button>
+              <p className="text-gray-500 text-sm">
+                Creators earn 90% revenue on all sales and can upload unlimited sample packs.
+              </p>
             </div>
           </div>
         </div>
@@ -112,11 +113,12 @@ const Creator = () => {
         <div className="pt-24 pb-12 px-4">
           <div className="container mx-auto max-w-2xl text-center">
             <div className="glass-panel p-12">
+              <div className="text-6xl mb-6">⏳</div>
               <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'Unbounded, sans-serif' }}>
-                Application Pending
+                Creator Approval Pending
               </h1>
               <p className="text-gray-400 text-lg">
-                Your creator application is under review. You'll be notified once approved!
+                Your creator account is being reviewed by the admin. You'll be notified once approved!
               </p>
             </div>
           </div>
