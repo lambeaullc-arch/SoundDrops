@@ -62,12 +62,16 @@ export const adminAPI = {
   listCreators: () => api.get('/admin/creators'),
   approveCreator: (creatorId) => api.post(`/admin/creators/${creatorId}/approve`),
   uploadPack: (formData) => api.post('/admin/packs', formData),
+  listPacks: () => api.get('/admin/packs'),
+  updatePack: (packId, formData) => api.put(`/admin/packs/${packId}`, formData),
+  deletePack: (packId) => api.delete(`/admin/packs/${packId}`),
   markFree: (packId, formData) => api.post(`/admin/packs/${packId}/mark-free`, formData),
   markFeatured: (packId, formData) => api.post(`/admin/packs/${packId}/mark-featured`, formData),
   markSyncReady: (packId, formData) => api.post(`/admin/packs/${packId}/mark-sync-ready`, formData),
   updateMetadata: (packId, formData) => api.post(`/admin/packs/${packId}/update-metadata`, formData),
   getStats: () => api.get('/admin/stats'),
   getAllUsers: () => api.get('/admin/users'),
+  promoteUser: (userId) => api.post(`/admin/users/${userId}/promote`),
   inviteCreator: (formData) => api.post('/admin/invite-creator', formData),
   listInvitations: () => api.get('/admin/invitations')
 };
