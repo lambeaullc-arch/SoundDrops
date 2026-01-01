@@ -103,6 +103,112 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Pricing Section */}
+      <div className="py-24 px-4 bg-gradient-to-br from-violet-600/10 to-purple-600/5">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Unbounded, sans-serif' }}>
+              Choose Your Plan
+            </h2>
+            <p className="text-xl text-gray-400">
+              Start free or get unlimited access for just $5/month
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
+            <div className="glass-panel p-8">
+              <div className="text-center mb-6">
+                <div className="text-5xl mb-4">🆓</div>
+                <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: 'Unbounded, sans-serif' }}>
+                  Free Registration
+                </h3>
+                <p className="text-4xl font-bold text-violet-400 mb-2">$0</p>
+                <p className="text-gray-400">Forever Free</p>
+              </div>
+
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Download all free sample packs</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Create favorites & collections</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Email updates on new releases</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Preview all samples with waveform</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Purchase premium packs individually</span>
+                </div>
+              </div>
+
+              <Link to="/login" className="btn-secondary w-full text-center block py-3">
+                Get Started Free
+              </Link>
+              <p className="text-sm text-gray-500 text-center mt-3">
+                No credit card required
+              </p>
+            </div>
+
+            {/* Premium Plan */}
+            <div className="glass-panel p-8 relative border-2 border-violet-500">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-gradient-to-r from-violet-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold">
+                  BEST VALUE
+                </span>
+              </div>
+
+              <div className="text-center mb-6">
+                <div className="text-5xl mb-4">💎</div>
+                <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: 'Unbounded, sans-serif' }}>
+                  Premium Subscription
+                </h3>
+                <p className="text-4xl font-bold text-violet-400 mb-2">$5</p>
+                <p className="text-gray-400">Per Month</p>
+              </div>
+
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span className="font-semibold">Unlimited downloads of ALL packs</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>All free account features</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Access to premium content</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Priority support</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-green-400 text-xl">✓</span>
+                  <span>Early access to new releases</span>
+                </div>
+              </div>
+
+              <Link to="/login" className="btn-primary w-full text-center block py-3">
+                Subscribe Now
+              </Link>
+              <p className="text-sm text-gray-500 text-center mt-3">
+                Cancel anytime
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* CTA Section */}
       <div className="py-24 px-4">
         <div className="container mx-auto max-w-4xl text-center">
