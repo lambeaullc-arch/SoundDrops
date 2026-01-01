@@ -10,6 +10,7 @@ import Favorites from './pages/Favorites';
 import Collections from './pages/Collections';
 import Creator from './pages/Creator';
 import AdminDashboard from './pages/AdminDashboard';
+import PackDetail from './pages/PackDetail';
 import AuthCallback from './components/auth/AuthCallback';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import './App.css';
@@ -31,6 +32,7 @@ function AppRouter() {
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/browse" element={<Browse />} />
       <Route path="/sync" element={<Sync />} />
+      <Route path="/pack/:packId" element={<PackDetail />} />
       
       <Route 
         path="/favorites" 
