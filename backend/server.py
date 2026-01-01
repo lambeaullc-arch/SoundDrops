@@ -80,6 +80,14 @@ AUDIO_STORAGE_PATH.mkdir(exist_ok=True)
 ZIP_STORAGE_PATH = ROOT_DIR / "zip_files"
 ZIP_STORAGE_PATH.mkdir(exist_ok=True)
 
+# Cover images storage
+COVERS_STORAGE_PATH = ROOT_DIR / "covers"
+COVERS_STORAGE_PATH.mkdir(exist_ok=True)
+
+# Preview audio storage
+PREVIEWS_STORAGE_PATH = ROOT_DIR / "previews"
+PREVIEWS_STORAGE_PATH.mkdir(exist_ok=True)
+
 # ============================================
 # PYDANTIC MODELS
 # ============================================
