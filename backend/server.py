@@ -1462,15 +1462,15 @@ async def get_admin_stats(request: Request, session_token: Optional[str] = Cooki
     total_purchases = await db.purchases.count_documents({})
     total_subscriptions = await db.subscriptions.count_documents({"status": "active"})
     
-    # Calculate revenue
-    purchases = await db.purchases.find({}, {"_id": 0}).to_list(10000)
-    total_revenue = sum(p["amount"] for p in purchases)
+    # Calculate revenue using aggregation for efficiency
+    pipeline = [{"$group": {"_id": None, "total": {"$sum": "$amount"}}}]
+    revenue_result = await db.purchases.aggregate(pipeline).to_list(1)
+    total_revenue = revenue_result[0]["total"] if revenue_result else 0.0
     platform_earnings = total_revenue * 0.1
     creator_earnings = total_revenue * 0.9
     
-    # Subscription revenue
-    subscriptions = await db.subscriptions.find({"status": "active"}, {"_id": 0}).to_list(10000)
-    subscription_revenue = len(subscriptions) * 5.0
+    # Subscription revenue (count * price)
+    subscription_revenue = total_subscriptions * 5.0
     
     return {
         "total_users": total_users,
