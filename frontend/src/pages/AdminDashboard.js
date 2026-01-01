@@ -173,6 +173,7 @@ const AdminDashboard = () => {
             { id: 'overview', label: '📊 Overview', icon: '📊' },
             { id: 'creators', label: '👥 Creator Management', icon: '👥' },
             { id: 'content', label: '🎵 Content Management', icon: '🎵' },
+            { id: 'emails', label: '📧 Email Collection', icon: '📧' },
             { id: 'upload', label: '⬆️ Upload Pack', icon: '⬆️' }
           ].map(tab => (
             <button
