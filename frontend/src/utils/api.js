@@ -63,5 +63,6 @@ export const adminAPI = {
   approveCreator: (creatorId) => api.post(`/admin/creators/${creatorId}/approve`),
   uploadPack: (formData) => api.post('/admin/packs', formData),
   markFree: (packId, formData) => api.post(`/admin/packs/${packId}/mark-free`, formData),
-  getStats: () => api.get('/admin/stats')
+  getStats: () => api.get('/admin/stats'),
+  getAllUsers: () => api.get('/admin/users')
 };
