@@ -383,6 +383,23 @@ async def get_sample(pack_id: str):
         raise HTTPException(status_code=404, detail="Sample pack not found")
     return pack
 
+@api_router.get("/samples/{pack_id}/audio")
+async def get_sample_audio(pack_id: str):
+    """Serve audio file for preview"""
+    pack = await db.sample_packs.find_one({"pack_id": pack_id}, {"_id": 0})
+    if not pack:
+        raise HTTPException(status_code=404, detail="Sample pack not found")
+    
+    file_path = ROOT_DIR / pack["audio_file_path"]
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    
+    return FileResponse(
+        path=file_path,
+        media_type="audio/mpeg",
+        headers={"Accept-Ranges": "bytes"}
+    )
+
 @api_router.get("/samples/{pack_id}/download")
 async def download_sample(
     pack_id: str,
