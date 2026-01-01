@@ -3,12 +3,11 @@ import { useState } from 'react';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleLogin = () => {
+  const handleLogin = (planType) => {
     // Store selection in localStorage for after auth callback
-    if (selectedOption) {
-      localStorage.setItem('registration_type', selectedOption);
+    if (planType) {
+      localStorage.setItem('registration_type', planType);
     }
     
     // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
@@ -35,10 +34,7 @@ const Login = () => {
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Free Registration Option */}
           <div 
-            className={`glass-panel p-8 cursor-pointer transition-all ${
-              selectedOption === 'free' ? 'ring-2 ring-violet-500 scale-105' : 'hover:scale-102'
-            }`}
-            onClick={() => setSelectedOption('free')}
+            className="glass-panel p-8 hover:scale-102 transition-all"
             data-testid="free-option-card"
           >
             <div className="text-center mb-6">
@@ -73,7 +69,15 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <button
+              onClick={() => handleLogin('free')}
+              className="w-full btn-secondary text-lg py-4"
+              data-testid="free-register-button"
+            >
+              🆓 Register Free with Google
+            </button>
+
+            <div className="pt-4 border-t border-white/10 mt-4">
               <p className="text-sm text-gray-500 text-center">
                 No credit card required • Upgrade anytime
               </p>
@@ -82,10 +86,7 @@ const Login = () => {
 
           {/* Subscription Option */}
           <div 
-            className={`glass-panel p-8 cursor-pointer transition-all relative ${
-              selectedOption === 'subscription' ? 'ring-2 ring-violet-500 scale-105' : 'hover:scale-102'
-            }`}
-            onClick={() => setSelectedOption('subscription')}
+            className="glass-panel p-8 hover:scale-102 transition-all relative border-2 border-violet-500"
             data-testid="subscription-option-card"
           >
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -126,41 +127,21 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <button
+              onClick={() => handleLogin('subscription')}
+              className="w-full btn-primary text-lg py-4"
+              data-testid="subscription-register-button"
+            >
+              💎 Subscribe with Google
+            </button>
+
+            <div className="pt-4 border-t border-white/10 mt-4">
               <p className="text-sm text-gray-500 text-center">
                 Cancel anytime • No commitment
               </p>
             </div>
           </div>
         </div>
-
-        {/* Action Button */}
-        {selectedOption && (
-          <div className="text-center animate-fadeIn">
-            <button
-              onClick={handleLogin}
-              className="btn-primary text-lg px-12 py-4 text-center"
-              data-testid="continue-to-register-button"
-            >
-              {selectedOption === 'free' 
-                ? '🆓 Register Free with Google' 
-                : '💎 Subscribe with Google'}
-            </button>
-            <p className="text-sm text-gray-500 mt-4">
-              {selectedOption === 'free'
-                ? 'You can upgrade to premium anytime after registration'
-                : 'You\'ll be redirected to complete payment after sign-in'}
-            </p>
-          </div>
-        )}
-
-        {!selectedOption && (
-          <div className="text-center">
-            <p className="text-gray-400 text-lg">
-              👆 Select a plan above to continue
-            </p>
-          </div>
-        )}
 
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500">
