@@ -133,12 +133,29 @@ const Browse = () => {
 
           {/* Subscription Banner */}
           {!subscription?.active && (
-            <div className="glass-panel p-6 mb-8 text-center" data-testid="subscription-banner">
-              <h3 className="text-2xl font-bold mb-2">Unlock Unlimited Downloads</h3>
-              <p className="text-gray-400 mb-4">Subscribe for just $5/month and download as many samples as you want!</p>
-              <button onClick={handleSubscribe} className="btn-primary" data-testid="subscribe-button">
-                Subscribe Now - $5/month
-              </button>
+            <div className="glass-panel p-6 mb-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-2">📬 Free Registration</h3>
+                  <p className="text-gray-400">
+                    Sign up free to download free packs and get email updates. Upgrade to $5/month for unlimited downloads of all premium packs!
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  {!user && (
+                    <button 
+                      onClick={() => window.location.href = '/login'} 
+                      className="btn-secondary whitespace-nowrap"
+                      data-testid="register-free-button"
+                    >
+                      🆓 Register Free
+                    </button>
+                  )}
+                  <button onClick={handleSubscribe} className="btn-primary whitespace-nowrap" data-testid="subscribe-button">
+                    💎 Subscribe $5/month
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
