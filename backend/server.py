@@ -1055,24 +1055,37 @@ async def get_creator_earnings(request: Request, session_token: Optional[str] = 
     """Get creator earnings summary"""
     user = await require_role(request, "creator", session_token)
     
-    # Get all creator's packs
-    packs = await db.sample_packs.find({"creator_id": user.user_id}, {"_id": 0}).to_list(1000)
+    # Get all creator's pack IDs only
+    packs = await db.sample_packs.find({"creator_id": user.user_id}, {"_id": 0, "pack_id": 1}).to_list(1000)
     pack_ids = [p["pack_id"] for p in packs]
     
-    # Get purchases
-    purchases = await db.purchases.find({"pack_id": {"$in": pack_ids}}, {"_id": 0}).to_list(10000)
+    if not pack_ids:
+        return {
+            "total_packs": 0,
+            "total_purchases": 0,
+            "total_downloads": 0,
+            "total_revenue": 0.0,
+            "creator_earnings": 0.0,
+            "platform_fee": 0.0
+        }
     
-    # Calculate earnings (90% to creator)
-    total_revenue = sum(p["amount"] for p in purchases)
+    # Calculate earnings using aggregation
+    pipeline = [
+        {"$match": {"pack_id": {"$in": pack_ids}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}, "count": {"$sum": 1}}}
+    ]
+    revenue_result = await db.purchases.aggregate(pipeline).to_list(1)
+    total_revenue = revenue_result[0]["total"] if revenue_result else 0.0
+    total_purchases = revenue_result[0]["count"] if revenue_result else 0
     creator_earnings = total_revenue * 0.9
     
-    # Get downloads
-    downloads = await db.downloads.find({"pack_id": {"$in": pack_ids}}, {"_id": 0}).to_list(10000)
+    # Get download count
+    total_downloads = await db.downloads.count_documents({"pack_id": {"$in": pack_ids}})
     
     return {
         "total_packs": len(packs),
-        "total_purchases": len(purchases),
-        "total_downloads": len(downloads),
+        "total_purchases": total_purchases,
+        "total_downloads": total_downloads,
         "total_revenue": total_revenue,
         "creator_earnings": creator_earnings,
         "platform_fee": total_revenue * 0.1
