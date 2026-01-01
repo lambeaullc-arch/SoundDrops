@@ -198,7 +198,7 @@ const Home = () => {
                 </div>
               </div>
 
-              <Link to="/login" className="btn-primary w-full text-center block py-3">
+              <Link to="/subscribe" className="btn-primary w-full text-center block py-3">
                 Subscribe Now
               </Link>
               <p className="text-sm text-gray-500 text-center mt-3">
