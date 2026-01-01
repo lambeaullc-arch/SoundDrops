@@ -252,24 +252,85 @@ const Creator = () => {
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-violet-500"
                 data-testid="upload-tags-input"
               />
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Price (USD) - 0 for free"
+                  value={uploadForm.price}
+                  onChange={(e) => setUploadForm({ ...uploadForm, price: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                  required
+                  data-testid="upload-price-input"
+                />
+                <input
+                  type="number"
+                  placeholder="BPM (optional)"
+                  value={uploadForm.bpm}
+                  onChange={(e) => setUploadForm({ ...uploadForm, bpm: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                  data-testid="upload-bpm-input"
+                />
+              </div>
               <input
-                type="number"
-                step="0.01"
-                placeholder="Price (USD) - 0 for free"
-                value={uploadForm.price}
-                onChange={(e) => setUploadForm({ ...uploadForm, price: e.target.value })}
+                type="text"
+                placeholder="Musical Key (e.g., Am, C, F#) - optional"
+                value={uploadForm.key}
+                onChange={(e) => setUploadForm({ ...uploadForm, key: e.target.value })}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-violet-500"
-                required
-                data-testid="upload-price-input"
+                data-testid="upload-key-input"
               />
-              <input
-                type="file"
-                accept="audio/*"
-                onChange={(e) => setUploadForm({ ...uploadForm, audioFile: e.target.files[0] })}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-violet-500"
-                required
-                data-testid="upload-audio-input"
-              />
+              
+              <div className="space-y-3 mb-4">
+                <label className="flex items-center gap-3 cursor-pointer p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+                  <input
+                    type="checkbox"
+                    checked={uploadForm.isFeatured}
+                    onChange={(e) => setUploadForm({ ...uploadForm, isFeatured: e.target.checked })}
+                    className="w-5 h-5"
+                    data-testid="upload-featured-checkbox"
+                  />
+                  <span>⭐ Request Featured Status</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+                  <input
+                    type="checkbox"
+                    checked={uploadForm.isSyncReady}
+                    onChange={(e) => setUploadForm({ ...uploadForm, isSyncReady: e.target.checked })}
+                    className="w-5 h-5"
+                    data-testid="upload-sync-checkbox"
+                  />
+                  <span>🎬 Sync Ready (Broadcast Quality)</span>
+                </label>
+                {uploadForm.isSyncReady && (
+                  <select
+                    value={uploadForm.syncType}
+                    onChange={(e) => setUploadForm({ ...uploadForm, syncType: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                    data-testid="upload-sync-type-select"
+                  >
+                    <option value="">Select Sync Type</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Film">Film</option>
+                    <option value="Cinematic">Cinematic</option>
+                    <option value="Broadcast">Broadcast</option>
+                  </select>
+                )}
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-semibold mb-2">Audio File or ZIP Archive</label>
+                <input
+                  type="file"
+                  accept="audio/*,.zip"
+                  onChange={(e) => setUploadForm({ ...uploadForm, audioFile: e.target.files[0] })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500"
+                  required
+                  data-testid="upload-audio-input"
+                />
+                <p className="text-sm text-gray-400 mt-2">Supports MP3, WAV, and ZIP files</p>
+              </div>
+              
               <div className="flex gap-3">
                 <button type="submit" className="flex-1 btn-primary" data-testid="submit-upload-button">
                   Upload
