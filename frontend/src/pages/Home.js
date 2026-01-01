@@ -21,7 +21,7 @@ const Home = () => {
               <Link to="/browse" className="text-gray-300 hover:text-white transition">
                 Browse
               </Link>
-              <Link to="/login" className="btn-primary" data-testid="home-login-button">
+              <Link to="/register" className="btn-primary" data-testid="home-login-button">
                 Sign In
               </Link>
             </div>
