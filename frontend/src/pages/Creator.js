@@ -14,6 +14,11 @@ const Creator = () => {
     category: 'Drums',
     tags: '',
     price: '',
+    bpm: '',
+    key: '',
+    isFeatured: false,
+    isSyncReady: false,
+    syncType: '',
     audioFile: null
   });
 
@@ -50,11 +55,34 @@ const Creator = () => {
       formData.append('category', uploadForm.category);
       formData.append('tags', uploadForm.tags);
       formData.append('price', uploadForm.price);
+      formData.append('is_featured', uploadForm.isFeatured);
+      formData.append('is_sync_ready', uploadForm.isSyncReady);
+      if (uploadForm.bpm) {
+        formData.append('bpm', uploadForm.bpm);
+      }
+      if (uploadForm.key) {
+        formData.append('key', uploadForm.key);
+      }
+      if (uploadForm.isSyncReady && uploadForm.syncType) {
+        formData.append('sync_type', uploadForm.syncType);
+      }
       formData.append('audio_file', uploadForm.audioFile);
 
       await creatorAPI.uploadPack(formData);
       setShowUploadModal(false);
-      setUploadForm({ title: '', description: '', category: 'Drums', tags: '', price: '', audioFile: null });
+      setUploadForm({ 
+        title: '', 
+        description: '', 
+        category: 'Drums', 
+        tags: '', 
+        price: '', 
+        bpm: '',
+        key: '',
+        isFeatured: false,
+        isSyncReady: false,
+        syncType: '',
+        audioFile: null 
+      });
       alert('Pack uploaded successfully!');
       fetchData();
     } catch (error) {
