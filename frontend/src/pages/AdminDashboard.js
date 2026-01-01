@@ -223,11 +223,59 @@ const AdminDashboard = () => {
     if (!window.confirm(`Promote ${userName} to creator?`)) return;
     
     try {
-      await adminAPI.approveCreator(userId);
+      await adminAPI.promoteUser(userId);
       alert('User promoted to creator!');
       fetchAllData();
     } catch (error) {
       alert('Failed to promote: ' + error.message);
+    }
+  };
+
+  const handleEditPack = async (pack) => {
+    setEditingPack(pack);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingPack) return;
+    
+    try {
+      const formData = new FormData();
+      formData.append('title', editingPack.title);
+      formData.append('description', editingPack.description);
+      formData.append('category', editingPack.category);
+      formData.append('tags', editingPack.tags?.join(', ') || '');
+      formData.append('price', editingPack.price);
+      formData.append('is_free', editingPack.is_free);
+      formData.append('is_featured', editingPack.is_featured);
+      formData.append('is_sync_ready', editingPack.is_sync_ready);
+      if (editingPack.sync_type) {
+        formData.append('sync_type', editingPack.sync_type);
+      }
+      if (editingPack.bpm) {
+        formData.append('bpm', editingPack.bpm);
+      }
+      if (editingPack.key) {
+        formData.append('key', editingPack.key);
+      }
+      
+      await adminAPI.updatePack(editingPack.pack_id, formData);
+      alert('Pack updated successfully!');
+      setEditingPack(null);
+      fetchAllData();
+    } catch (error) {
+      alert('Failed to update: ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
+  const handleDeletePack = async (packId, title) => {
+    if (!window.confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
+    
+    try {
+      await adminAPI.deletePack(packId);
+      alert('Pack deleted successfully!');
+      fetchAllData();
+    } catch (error) {
+      alert('Failed to delete: ' + (error.response?.data?.detail || error.message));
     }
   };
 
