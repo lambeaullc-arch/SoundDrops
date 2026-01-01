@@ -9,7 +9,6 @@ import Sync from './pages/Sync';
 import Favorites from './pages/Favorites';
 import Collections from './pages/Collections';
 import Creator from './pages/Creator';
-import Admin from './pages/Admin';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthCallback from './components/auth/AuthCallback';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -60,15 +59,11 @@ function AppRouter() {
         } 
       />
       
+      {/* Admin routes - both /admin and /admin-dashboard go to the full dashboard */}
       <Route 
         path="/admin" 
-        element={
-          <ProtectedRoute requireRole="admin">
-            <Admin />
-          </ProtectedRoute>
-        } 
+        element={<AdminDashboard />}
       />
-
       <Route 
         path="/admin-dashboard" 
         element={<AdminDashboard />}
