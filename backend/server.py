@@ -245,13 +245,19 @@ async def create_session(request: Request, response: Response):
     
     if existing_user:
         user_id = existing_user["user_id"]
-        # Update user info
+        # Check if this is admin email and update role if needed
+        is_admin = data["email"].lower() == ADMIN_EMAIL.lower()
+        update_data = {
+            "name": data["name"],
+            "picture": data.get("picture")
+        }
+        # Update role to admin if it matches admin email
+        if is_admin and existing_user.get("role") != "admin":
+            update_data["role"] = "admin"
+        
         await db.users.update_one(
             {"user_id": user_id},
-            {"$set": {
-                "name": data["name"],
-                "picture": data.get("picture")
-            }}
+            {"$set": update_data}
         )
     else:
         # Create new user
