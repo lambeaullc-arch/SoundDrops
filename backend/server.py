@@ -1050,11 +1050,16 @@ async def admin_upload_pack(
     price: float = Form(...),
     creator_email: str = Form(...),
     is_free: bool = Form(False),
+    bpm: Optional[int] = Form(None),
+    key: Optional[str] = Form(None),
+    is_featured: bool = Form(False),
+    is_sync_ready: bool = Form(False),
+    sync_type: Optional[str] = Form(None),
     audio_file: UploadFile = File(...),
     request: Request = None,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Admin upload pack for a creator"""
+    """Admin upload pack for a creator - supports audio files and ZIP archives"""
     admin = await require_role(request, "admin", session_token)
     
     # Get creator
@@ -1066,17 +1071,31 @@ async def admin_upload_pack(
     if price < 0:
         raise HTTPException(status_code=400, detail="Price cannot be negative")
     
-    # Save audio file
+    # Save file
     pack_id = f"pack_{uuid.uuid4().hex[:12]}"
-    file_extension = audio_file.filename.split(".")[-1]
-    audio_filename = f"{pack_id}.{file_extension}"
-    audio_path = AUDIO_STORAGE_PATH / audio_filename
+    file_extension = audio_file.filename.split(".")[-1].lower()
     
-    with open(audio_path, "wb") as f:
-        shutil.copyfileobj(audio_file.file, f)
-    
-    # Get file info
-    file_size = os.path.getsize(audio_path)
+    # Handle ZIP files
+    if file_extension == "zip":
+        # Save ZIP file
+        zip_filename = f"{pack_id}.zip"
+        zip_path = ZIP_STORAGE_PATH / zip_filename
+        
+        with open(zip_path, "wb") as f:
+            shutil.copyfileobj(audio_file.file, f)
+        
+        file_size = os.path.getsize(zip_path)
+        file_path = f"zip_files/{zip_filename}"
+    else:
+        # Save audio file
+        audio_filename = f"{pack_id}.{file_extension}"
+        audio_path = AUDIO_STORAGE_PATH / audio_filename
+        
+        with open(audio_path, "wb") as f:
+            shutil.copyfileobj(audio_file.file, f)
+        
+        file_size = os.path.getsize(audio_path)
+        file_path = f"audio_files/{audio_filename}"
     
     # Parse tags
     tags_list = [t.strip() for t in tags.split(",") if t.strip()]
@@ -1090,14 +1109,15 @@ async def admin_upload_pack(
         "tags": tags_list,
         "price": price if not is_free else 0.0,
         "is_free": is_free or price == 0,
-        "is_featured": False,
-        "is_sync_ready": False,
-        "sync_type": None,
-        "bpm": None,
-        "key": None,
+        "is_featured": is_featured,
+        "is_sync_ready": is_sync_ready,
+        "sync_type": sync_type if is_sync_ready else None,
+        "bpm": bpm,
+        "key": key,
         "creator_id": creator["user_id"],
         "creator_name": creator["name"],
-        "audio_file_path": f"audio_files/{audio_filename}",
+        "audio_file_path": file_path,
+        "file_type": "zip" if file_extension == "zip" else "audio",
         "duration": 0.0,
         "file_size": file_size,
         "download_count": 0,
@@ -1105,7 +1125,8 @@ async def admin_upload_pack(
     }
     await db.sample_packs.insert_one(pack_doc)
     
-    return pack_doc
+    # Return serialized document (without _id)
+    return serialize_doc(pack_doc)
 
 @api_router.post("/admin/packs/{pack_id}/mark-free")
 async def mark_pack_free(
