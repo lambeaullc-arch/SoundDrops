@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Browse from './pages/Browse';
 import Favorites from './pages/Favorites';
@@ -20,18 +21,10 @@ function AppRouter() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/browse" replace />} />
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
-      
-      <Route 
-        path="/browse" 
-        element={
-          <ProtectedRoute>
-            <Browse />
-          </ProtectedRoute>
-        } 
-      />
+      <Route path="/browse" element={<Browse />} />
       
       <Route 
         path="/favorites" 
@@ -69,7 +62,7 @@ function AppRouter() {
         } 
       />
 
-      <Route path="*" element={<Navigate to="/browse" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
