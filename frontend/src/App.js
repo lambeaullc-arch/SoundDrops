@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Subscribe from './pages/Subscribe';
 import Browse from './pages/Browse';
 import Favorites from './pages/Favorites';
 import Collections from './pages/Collections';
@@ -24,6 +26,8 @@ function AppRouter() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/subscribe" element={<Subscribe />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/browse" element={<Browse />} />
       
