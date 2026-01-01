@@ -150,7 +150,7 @@ const Home = () => {
                 </div>
               </div>
 
-              <Link to="/login" className="btn-secondary w-full text-center block py-3">
+              <Link to="/register" className="btn-secondary w-full text-center block py-3">
                 Get Started Free
               </Link>
               <p className="text-sm text-gray-500 text-center mt-3">
