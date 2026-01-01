@@ -120,6 +120,18 @@ const AdminDashboard = () => {
     }
   };
 
+  const handlePromoteToCreator = async (userId, userName) => {
+    if (!window.confirm(`Promote ${userName} to creator?`)) return;
+    
+    try {
+      await adminAPI.approveCreator(userId);
+      alert('User promoted to creator!');
+      fetchAllData();
+    } catch (error) {
+      alert('Failed to promote: ' + error.message);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await authAPI.logout();
