@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { authAPI, adminAPI, samplesAPI } from '../utils/api';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showNav, setShowNav] = useState(false);
   
   // Data states
   const [stats, setStats] = useState(null);
@@ -28,7 +31,9 @@ const AdminDashboard = () => {
     syncType: '',
     bpm: '',
     key: '',
-    audioFile: null
+    audioFile: null,
+    coverImage: null,
+    previewAudio: null
   });
   const [editingPack, setEditingPack] = useState(null);
 
