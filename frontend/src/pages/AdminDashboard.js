@@ -94,6 +94,20 @@ const AdminDashboard = () => {
 
   const handleUploadPack = async (e) => {
     e.preventDefault();
+    
+    // Validate cover image
+    if (!uploadForm.coverImage) {
+      alert('Cover image is required');
+      return;
+    }
+    
+    // Validate preview audio for ZIP files
+    const isZip = uploadForm.audioFile?.name?.toLowerCase().endsWith('.zip');
+    if (isZip && !uploadForm.previewAudio) {
+      alert('Preview audio is required for ZIP files');
+      return;
+    }
+    
     try {
       const formData = new FormData();
       formData.append('title', uploadForm.title);
@@ -115,6 +129,10 @@ const AdminDashboard = () => {
         formData.append('key', uploadForm.key);
       }
       formData.append('audio_file', uploadForm.audioFile);
+      formData.append('cover_image', uploadForm.coverImage);
+      if (uploadForm.previewAudio) {
+        formData.append('preview_audio', uploadForm.previewAudio);
+      }
 
       await adminAPI.uploadPack(formData);
       alert('Pack uploaded successfully!');
@@ -131,7 +149,9 @@ const AdminDashboard = () => {
         syncType: '',
         bpm: '',
         key: '',
-        audioFile: null
+        audioFile: null,
+        coverImage: null,
+        previewAudio: null
       });
       fetchAllData();
     } catch (error) {
