@@ -31,15 +31,33 @@ const AuthCallback = () => {
         // Check if user selected subscription during registration
         const registrationType = localStorage.getItem('registration_type');
         
-        // Redirect admin users to admin dashboard
+        // Route based on user role (for existing users signing in)
+        if (!registrationType) {
+          // Existing user signing in - route to appropriate dashboard
+          if (user.role === 'admin') {
+            console.log('Existing admin - redirecting to admin dashboard');
+            navigate('/admin-dashboard', { replace: true });
+            return;
+          } else if (user.role === 'creator') {
+            console.log('Existing creator - redirecting to creator dashboard');
+            navigate('/creator', { replace: true });
+            return;
+          } else {
+            console.log('Existing user - redirecting to browse');
+            navigate('/browse', { state: { user }, replace: true });
+            return;
+          }
+        }
+
+        // New user registration flow
+        localStorage.removeItem('registration_type');
+        
         if (user.role === 'admin') {
-          console.log('Redirecting to admin dashboard');
-          localStorage.removeItem('registration_type');
+          console.log('New admin - redirecting to admin dashboard');
           navigate('/admin-dashboard', { replace: true });
         } else if (registrationType === 'subscription') {
           // User chose subscription - redirect to subscription checkout
-          console.log('Redirecting to subscription checkout');
-          localStorage.removeItem('registration_type');
+          console.log('New user with subscription - redirecting to checkout');
           try {
             const subResponse = await subscriptionAPI.createCheckout(window.location.origin);
             window.location.href = subResponse.data.url;
@@ -48,10 +66,12 @@ const AuthCallback = () => {
             // Fallback to browse if checkout fails
             navigate('/browse', { state: { user }, replace: true });
           }
+        } else if (user.role === 'creator') {
+          console.log('New creator - redirecting to creator dashboard');
+          navigate('/creator', { replace: true });
         } else {
-          // Regular user or free registration
-          console.log('Redirecting to browse');
-          localStorage.removeItem('registration_type');
+          // Free registration
+          console.log('New free user - redirecting to browse');
           navigate('/browse', { state: { user }, replace: true });
         }
       } catch (error) {
