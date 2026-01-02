@@ -275,39 +275,59 @@ const Home = () => {
                     const coverUrl = getCoverUrl(pack);
                     return (
                       <div key={pack.pack_id} className="glass-panel-hover p-4">
-                        <div className="flex gap-4">
-                          {/* Cover Image with Play Button */}
-                          <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 group">
+                        <div className="flex gap-4 mb-3">
+                          {/* Cover Image */}
+                          <Link to={`/pack/${pack.pack_id}`} className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 group">
                             {coverUrl ? (
                               <img 
                                 src={coverUrl} 
                                 alt={pack.title}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover group-hover:scale-110 transition"
                               />
                             ) : (
                               <div className="w-full h-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-3xl">
                                 🎵
                               </div>
                             )}
-                            {/* Play Button Overlay */}
-                            {previewUrl && (
-                              <button
-                                onClick={() => togglePlay(pack.pack_id, previewUrl)}
-                                className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition"
-                                data-testid={`play-btn-${pack.pack_id}`}
-                              >
-                                {playingPack === pack.pack_id ? (
-                                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                  </svg>
-                                ) : (
-                                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z"/>
-                                  </svg>
-                                )}
-                              </button>
-                            )}
-                            {playingPack === pack.pack_id && (
+                            <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-yellow-500 text-black rounded text-xs font-bold">
+                              FEATURED
+                            </span>
+                          </Link>
+                          <div className="flex-1 min-w-0">
+                            <Link to={`/pack/${pack.pack_id}`}>
+                              <h3 className="font-bold text-lg mb-1 truncate hover:text-violet-400 transition">{pack.title}</h3>
+                            </Link>
+                            <p className="text-sm text-gray-400 mb-2">by {pack.creator_name}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="px-2 py-1 bg-white/10 rounded text-xs">{pack.category}</span>
+                              {pack.bpm && <span className="px-2 py-1 bg-white/10 rounded text-xs">{pack.bpm} BPM</span>}
+                              {pack.is_free ? (
+                                <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">FREE</span>
+                              ) : (
+                                <span className="px-2 py-1 bg-violet-500/20 text-violet-400 rounded text-xs font-bold">${pack.price}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {/* Waveform Player */}
+                        {previewUrl && (
+                          <MiniWaveformPlayer 
+                            audioUrl={previewUrl}
+                            packId={pack.pack_id}
+                            isGlobalPlaying={playingPack}
+                            onPlay={(id) => setPlayingPack(id)}
+                            onStop={() => setPlayingPack(null)}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="glass-panel p-8 text-center">
+                  <p className="text-gray-400">No featured packs yet</p>
+                </div>
+              )}
                               <div className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                             )}
                           </div>
