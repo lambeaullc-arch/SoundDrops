@@ -32,3 +32,32 @@
         transform: rotate(360deg);
     }
 }
+
+/* Fix dropdown/select styling - dark background with light text */
+select,
+select option {
+    background-color: #1a1a2e !important;
+    color: #ffffff !important;
+}
+
+select:focus {
+    background-color: #1a1a2e !important;
+}
+
+select option:hover,
+select option:checked {
+    background-color: #8B5CF6 !important;
+    color: #ffffff !important;
+}
+
+/* Ensure dropdown menus have high z-index */
+[data-testid="nav-dropdown"],
+.nav-dropdown {
+    z-index: 9999 !important;
+}
+
+/* Glass panel improvements for dropdowns */
+.glass-panel select {
+    background-color: rgba(26, 26, 46, 0.95) !important;
+}
+
