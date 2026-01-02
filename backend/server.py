@@ -1110,9 +1110,251 @@ async def update_payout_settings(
     
     return {"message": f"Payout frequency updated to {frequency}"}
 
+
+class PayoutMethodRequest(BaseModel):
+    method: str  # paypal, debit_card, bank_transfer
+    paypal_email: Optional[str] = None
+    card_number: Optional[str] = None
+    card_expiry: Optional[str] = None
+    card_cvv: Optional[str] = None
+    card_holder_name: Optional[str] = None
+    bank_account_number: Optional[str] = None
+    bank_routing_number: Optional[str] = None
+    bank_account_name: Optional[str] = None
+
+
+@api_router.post("/creator/payout-method")
+async def update_payout_method(
+    data: PayoutMethodRequest,
+    request: Request = None,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Update creator's payout method (PayPal, Debit Card, Bank Transfer)"""
+    user = await require_role(request, "creator", session_token)
+    
+    if data.method not in ["paypal", "debit_card", "bank_transfer"]:
+        raise HTTPException(status_code=400, detail="Invalid payout method")
+    
+    payout_info = {"payout_method": data.method}
+    
+    if data.method == "paypal":
+        if not data.paypal_email:
+            raise HTTPException(status_code=400, detail="PayPal email required")
+        payout_info["paypal_email"] = data.paypal_email
+        
+    elif data.method == "debit_card":
+        if not all([data.card_number, data.card_expiry, data.card_holder_name]):
+            raise HTTPException(status_code=400, detail="Card details required")
+        # Store masked card number for security
+        payout_info["card_last_four"] = data.card_number[-4:]
+        payout_info["card_holder_name"] = data.card_holder_name
+        payout_info["card_expiry"] = data.card_expiry
+        # In production, use a payment processor to tokenize card
+        
+    elif data.method == "bank_transfer":
+        if not all([data.bank_account_number, data.bank_routing_number, data.bank_account_name]):
+            raise HTTPException(status_code=400, detail="Bank details required")
+        payout_info["bank_account_last_four"] = data.bank_account_number[-4:]
+        payout_info["bank_routing_number"] = data.bank_routing_number
+        payout_info["bank_account_name"] = data.bank_account_name
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"payout_info": payout_info}}
+    )
+    
+    return {"message": f"Payout method updated to {data.method}"}
+
+
+@api_router.get("/creator/payout-method")
+async def get_payout_method(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Get creator's current payout method"""
+    user = await require_role(request, "creator", session_token)
+    
+    user_data = await db.users.find_one({"user_id": user.user_id}, {"_id": 0, "payout_info": 1})
+    return user_data.get("payout_info", {"payout_method": None})
+
+
+@api_router.post("/creator/request-payout")
+async def request_payout(
+    amount: float = Form(...),
+    request: Request = None,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Request instant payout (debit card) or scheduled payout"""
+    user = await require_role(request, "creator", session_token)
+    
+    # Get user's payout info
+    user_data = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+    payout_info = user_data.get("payout_info", {})
+    
+    if not payout_info.get("payout_method"):
+        raise HTTPException(status_code=400, detail="No payout method configured")
+    
+    # Get creator's available balance
+    packs = await db.sample_packs.find({"creator_id": user.user_id}, {"_id": 0, "pack_id": 1}).to_list(1000)
+    pack_ids = [p["pack_id"] for p in packs]
+    
+    pipeline = [
+        {"$match": {"pack_id": {"$in": pack_ids}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+    ]
+    revenue_result = await db.purchases.aggregate(pipeline).to_list(1)
+    total_revenue = revenue_result[0]["total"] if revenue_result else 0.0
+    available_balance = total_revenue * 0.9  # 90% to creator
+    
+    # Check for previous payouts
+    previous_payouts = await db.payouts.aggregate([
+        {"$match": {"creator_id": user.user_id, "status": {"$in": ["completed", "pending"]}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+    ]).to_list(1)
+    total_paid = previous_payouts[0]["total"] if previous_payouts else 0.0
+    
+    current_balance = available_balance - total_paid
+    
+    if amount > current_balance:
+        raise HTTPException(status_code=400, detail=f"Insufficient balance. Available: ${current_balance:.2f}")
+    
+    if amount < 1.0:
+        raise HTTPException(status_code=400, detail="Minimum payout amount is $1.00")
+    
+    # Create payout request
+    payout_doc = {
+        "payout_id": f"payout_{uuid.uuid4().hex[:12]}",
+        "creator_id": user.user_id,
+        "amount": amount,
+        "method": payout_info["payout_method"],
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    # For debit card, mark as "instant" (in production, would process immediately)
+    if payout_info["payout_method"] == "debit_card":
+        payout_doc["status"] = "processing"
+        payout_doc["is_instant"] = True
+    
+    await db.payouts.insert_one(payout_doc)
+    
+    return {
+        "message": f"Payout of ${amount:.2f} requested via {payout_info['payout_method']}",
+        "payout_id": payout_doc["payout_id"],
+        "status": payout_doc["status"]
+    }
+
+
+@api_router.get("/creator/payouts")
+async def get_payout_history(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Get creator's payout history"""
+    user = await require_role(request, "creator", session_token)
+    
+    payouts = await db.payouts.find(
+        {"creator_id": user.user_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return payouts
+
+
+@api_router.get("/creator/balance")
+async def get_creator_balance(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Get creator's current available balance"""
+    user = await require_role(request, "creator", session_token)
+    
+    # Get creator's packs
+    packs = await db.sample_packs.find({"creator_id": user.user_id}, {"_id": 0, "pack_id": 1}).to_list(1000)
+    pack_ids = [p["pack_id"] for p in packs]
+    
+    if not pack_ids:
+        return {"total_earned": 0.0, "total_paid": 0.0, "available_balance": 0.0}
+    
+    # Calculate total revenue
+    pipeline = [
+        {"$match": {"pack_id": {"$in": pack_ids}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+    ]
+    revenue_result = await db.purchases.aggregate(pipeline).to_list(1)
+    total_revenue = revenue_result[0]["total"] if revenue_result else 0.0
+    total_earned = total_revenue * 0.9  # 90% to creator
+    
+    # Get total payouts
+    payouts_result = await db.payouts.aggregate([
+        {"$match": {"creator_id": user.user_id, "status": {"$in": ["completed", "pending", "processing"]}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+    ]).to_list(1)
+    total_paid = payouts_result[0]["total"] if payouts_result else 0.0
+    
+    return {
+        "total_earned": total_earned,
+        "total_paid": total_paid,
+        "available_balance": total_earned - total_paid
+    }
+
+
 # ============================================
 # ADMIN ENDPOINTS
 # ============================================
+
+@api_router.post("/admin/payout-method")
+async def admin_update_payout_method(
+    data: PayoutMethodRequest,
+    request: Request = None,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Admin update their payout method"""
+    user = await require_role(request, "admin", session_token)
+    
+    if data.method not in ["paypal", "debit_card", "bank_transfer"]:
+        raise HTTPException(status_code=400, detail="Invalid payout method")
+    
+    payout_info = {"payout_method": data.method}
+    
+    if data.method == "paypal":
+        if not data.paypal_email:
+            raise HTTPException(status_code=400, detail="PayPal email required")
+        payout_info["paypal_email"] = data.paypal_email
+        
+    elif data.method == "debit_card":
+        if not all([data.card_number, data.card_expiry, data.card_holder_name]):
+            raise HTTPException(status_code=400, detail="Card details required")
+        payout_info["card_last_four"] = data.card_number[-4:]
+        payout_info["card_holder_name"] = data.card_holder_name
+        payout_info["card_expiry"] = data.card_expiry
+        
+    elif data.method == "bank_transfer":
+        if not all([data.bank_account_number, data.bank_routing_number, data.bank_account_name]):
+            raise HTTPException(status_code=400, detail="Bank details required")
+        payout_info["bank_account_last_four"] = data.bank_account_number[-4:]
+        payout_info["bank_routing_number"] = data.bank_routing_number
+        payout_info["bank_account_name"] = data.bank_account_name
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"payout_info": payout_info}}
+    )
+    
+    return {"message": f"Payment method updated to {data.method}"}
+
+
+@api_router.get("/admin/payout-method")
+async def admin_get_payout_method(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Get admin's current payout method"""
+    user = await require_role(request, "admin", session_token)
+    
+    user_data = await db.users.find_one({"user_id": user.user_id}, {"_id": 0, "payout_info": 1})
+    return user_data.get("payout_info", {"payout_method": None})
+
 
 @api_router.get("/admin/creators")
 async def list_pending_creators(request: Request, session_token: Optional[str] = Cookie(None)):
