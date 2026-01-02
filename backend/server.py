@@ -1674,10 +1674,32 @@ async def admin_delete_pack(
     if not pack:
         raise HTTPException(status_code=404, detail="Pack not found")
     
-    # Delete the file
-    file_path = ROOT_DIR / pack["audio_file_path"]
-    if file_path.exists():
-        os.remove(file_path)
+    # Delete the audio/zip file
+    if pack.get("audio_file_path"):
+        file_path = ROOT_DIR / pack["audio_file_path"]
+        if file_path.exists():
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                logging.warning(f"Failed to delete audio file: {e}")
+    
+    # Delete cover image
+    if pack.get("cover_image_path"):
+        cover_path = ROOT_DIR / pack["cover_image_path"]
+        if cover_path.exists():
+            try:
+                os.remove(cover_path)
+            except Exception as e:
+                logging.warning(f"Failed to delete cover: {e}")
+    
+    # Delete preview audio
+    if pack.get("preview_audio_path"):
+        preview_path = ROOT_DIR / pack["preview_audio_path"]
+        if preview_path.exists():
+            try:
+                os.remove(preview_path)
+            except Exception as e:
+                logging.warning(f"Failed to delete preview: {e}")
     
     # Delete from database
     await db.sample_packs.delete_one({"pack_id": pack_id})
