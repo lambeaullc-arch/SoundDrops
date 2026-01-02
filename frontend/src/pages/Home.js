@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { samplesAPI } from '../utils/api';
-import MiniWaveformPlayer from '../components/audio/MiniWaveformPlayer';
+import MiniAudioPlayer from '../components/audio/MiniAudioPlayer';
 import Navbar from '../components/layout/Navbar';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
