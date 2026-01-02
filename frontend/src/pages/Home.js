@@ -257,7 +257,7 @@ const Home = () => {
                           </div>
                         </div>
                         {previewUrl && (
-                          <MiniWaveformPlayer 
+                          <MiniAudioPlayer 
                             audioUrl={previewUrl}
                             packId={pack.pack_id}
                             isGlobalPlaying={playingPack}
@@ -323,7 +323,7 @@ const Home = () => {
                           </div>
                         </div>
                         {previewUrl && (
-                          <MiniWaveformPlayer 
+                          <MiniAudioPlayer 
                             audioUrl={previewUrl}
                             packId={pack.pack_id}
                             isGlobalPlaying={playingPack}
