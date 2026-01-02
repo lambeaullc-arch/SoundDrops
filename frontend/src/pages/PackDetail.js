@@ -80,27 +80,6 @@ const PackDetail = () => {
                   className="w-full h-full object-cover"
                   data-testid="pack-cover-image"
                 />
-                
-                {/* Play Button Overlay */}
-                {previewUrl && (
-                  <button
-                    onClick={togglePlay}
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition group"
-                    data-testid="play-preview-btn"
-                  >
-                    <div className="w-20 h-20 rounded-full bg-violet-500 flex items-center justify-center group-hover:scale-110 transition">
-                      {isPlaying ? (
-                        <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                        </svg>
-                      ) : (
-                        <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      )}
-                    </div>
-                  </button>
-                )}
 
                 {/* Badges */}
                 <div className="absolute top-4 left-4 flex gap-2">
@@ -122,22 +101,12 @@ const PackDetail = () => {
                 </div>
               </div>
 
-              {/* Hidden Audio Element */}
+              {/* Waveform Audio Player */}
               {previewUrl && (
-                <audio
-                  ref={setAudioRef}
-                  src={previewUrl}
-                  onEnded={() => setIsPlaying(false)}
-                  data-testid="audio-player"
-                />
-              )}
-
-              {/* Audio Preview Info */}
-              {previewUrl && (
-                <div className="glass-panel p-4 text-center">
-                  <p className="text-sm text-gray-400">
-                    {isPlaying ? '🎵 Playing preview...' : 'Click to play audio preview'}
-                  </p>
+                <div className="glass-panel p-4">
+                  <h3 className="text-sm font-semibold mb-3 text-gray-400">Audio Preview</h3>
+                  <WaveformPlayer audioUrl={previewUrl} packTitle={pack.title} />
+                  <p className="text-xs text-gray-500 mt-2 text-center">Click on waveform to seek</p>
                 </div>
               )}
             </div>
