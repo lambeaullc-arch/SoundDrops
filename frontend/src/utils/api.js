@@ -55,7 +55,12 @@ export const creatorAPI = {
   uploadPack: (formData) => api.post('/creator/packs', formData),
   listPacks: () => api.get('/creator/packs'),
   getEarnings: () => api.get('/creator/earnings'),
-  updatePayoutSettings: (formData) => api.post('/creator/payout-settings', formData)
+  updatePayoutSettings: (formData) => api.post('/creator/payout-settings', formData),
+  getPayoutMethod: () => api.get('/creator/payout-method'),
+  updatePayoutMethod: (data) => api.post('/creator/payout-method', data),
+  getBalance: () => api.get('/creator/balance'),
+  requestPayout: (formData) => api.post('/creator/request-payout', formData),
+  getPayoutHistory: () => api.get('/creator/payouts')
 };
 
 export const adminAPI = {
@@ -73,5 +78,7 @@ export const adminAPI = {
   getAllUsers: () => api.get('/admin/users'),
   promoteUser: (userId) => api.post(`/admin/users/${userId}/promote`),
   inviteCreator: (formData) => api.post('/admin/invite-creator', formData),
-  listInvitations: () => api.get('/admin/invitations')
+  listInvitations: () => api.get('/admin/invitations'),
+  getPayoutMethod: () => api.get('/admin/payout-method'),
+  updatePayoutMethod: (data) => api.post('/admin/payout-method', data)
 };
