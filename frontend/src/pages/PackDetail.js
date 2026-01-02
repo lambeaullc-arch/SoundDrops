@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
+import WaveformPlayer from '../components/audio/WaveformPlayer';
 import { samplesAPI } from '../utils/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -9,8 +10,6 @@ const PackDetail = () => {
   const { packId } = useParams();
   const [pack, setPack] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioRef, setAudioRef] = useState(null);
 
   const fetchPack = useCallback(async () => {
     try {
@@ -26,17 +25,6 @@ const PackDetail = () => {
   useEffect(() => {
     fetchPack();
   }, [fetchPack]);
-
-  const togglePlay = () => {
-    if (audioRef) {
-      if (isPlaying) {
-        audioRef.pause();
-      } else {
-        audioRef.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
 
   if (loading) {
     return (
