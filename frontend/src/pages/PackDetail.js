@@ -101,12 +101,11 @@ const PackDetail = () => {
                 </div>
               </div>
 
-              {/* Waveform Audio Player */}
+              {/* Audio Player */}
               {previewUrl && (
                 <div className="glass-panel p-4">
                   <h3 className="text-sm font-semibold mb-3 text-gray-400">Audio Preview</h3>
-                  <WaveformPlayer audioUrl={previewUrl} packTitle={pack.title} />
-                  <p className="text-xs text-gray-500 mt-2 text-center">Click on waveform to seek</p>
+                  <SimpleAudioPlayer audioUrl={previewUrl} packTitle={pack.title} />
                 </div>
               )}
             </div>
