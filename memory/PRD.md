@@ -7,13 +7,13 @@ Build a music sample marketplace called "SoundDrops" with:
 - Free registration or $5/month subscription
 - Smart sign-in redirects to role-specific dashboards
 - 90/10 revenue split (90% to creators, 10% platform)
-- Stripe integration for payments and payouts
+- PayPal/Debit Card/Bank Transfer for payouts
 
 ## Tech Stack
 - **Frontend**: React, TailwindCSS, wavesurfer.js
 - **Backend**: FastAPI, MongoDB (motor async driver)
 - **Authentication**: Google OAuth via Emergent Auth
-- **Payments**: Stripe (test mode - sk_test_emergent)
+- **Payments**: PayPal (payouts), Debit Card (instant cashout), Bank Transfer
 
 ## User Roles
 1. **Admin** (lambeaullc@gmail.com)
@@ -21,11 +21,14 @@ Build a music sample marketplace called "SoundDrops" with:
    - Upload/edit packs, manage content
    - Invite creators, promote users
    - View all user emails
+   - Configure payout method (PayPal, Debit Card, Bank Transfer)
    
 2. **Creators** (invite-only)
    - Upload sample packs (audio + ZIP)
    - View earnings dashboard
    - 90% revenue share
+   - Choose payout method
+   - Request instant cashout (debit card)
    
 3. **Customers**
    - Browse and download samples
@@ -35,7 +38,7 @@ Build a music sample marketplace called "SoundDrops" with:
 
 ### Implemented ✅
 - [x] Multi-role authentication with Google OAuth
-- [x] Admin dashboard with all tabs (Overview, Creator Mgmt, Content, Emails, Payments, Upload)
+- [x] Admin dashboard with all tabs
 - [x] Creator dashboard with upload capability
 - [x] ZIP file upload support for sample packs
 - [x] Featured/Sync-Ready toggles for uploads
@@ -44,27 +47,29 @@ Build a music sample marketplace called "SoundDrops" with:
 - [x] Creator invitation system
 - [x] User promotion to creator
 - [x] ObjectId serialization fix for MongoDB
-- [x] Role-based routing (admin -> /admin-dashboard, creator -> /creator)
+- [x] Role-based routing
 - [x] **Cover art upload (required for every pack)**
-- [x] **Audio preview from homepage with play/pause**
+- [x] **Audio waveform preview with seek functionality**
 - [x] **Preview audio upload for ZIP files**
 - [x] **Pack detail page at /pack/:packId**
-- [x] **Navigation menu on admin dashboard**
+- [x] **Navigation menu on all pages**
 - [x] **View Pack button in content management**
-- [x] **Optimized database queries for production**
+- [x] **Fixed dropdown styling (dark background)**
+- [x] **PayPal payout support**
+- [x] **Debit card instant cashout**
+- [x] **Bank transfer payout option**
+- [x] **Creator balance & payout history**
 
 ### In Progress 🔄
 - [ ] Admin redirect after login (needs user verification)
 
 ### Upcoming Tasks 📋
 - [ ] BPM/Key filtering in search
-- [ ] Stripe checkout integration (test keys ready)
 - [ ] Subscription management
 
 ### Future/Backlog 📦
 - [ ] App rebranding (new name TBD)
 - [ ] Bundle feature for bulk downloads
-- [ ] Creator payout via Stripe Connect
 - [ ] Email notifications
 
 ## Key Endpoints
@@ -87,13 +92,16 @@ Build a music sample marketplace called "SoundDrops" with:
 - `POST /api/admin/packs` - Upload pack (with cover + preview)
 - `PUT /api/admin/packs/{pack_id}` - Edit pack
 - `DELETE /api/admin/packs/{pack_id}` - Delete pack
-- `POST /api/admin/invite-creator` - Invite creator
-- `POST /api/admin/users/{user_id}/promote` - Promote to creator
+- `GET/POST /api/admin/payout-method` - Admin payout settings
 
 ### Creator
-- `POST /api/creator/packs` - Upload pack (with cover + preview)
+- `POST /api/creator/packs` - Upload pack
 - `GET /api/creator/packs` - List own packs
 - `GET /api/creator/earnings` - Earnings summary
+- `GET/POST /api/creator/payout-method` - Payout settings
+- `GET /api/creator/balance` - Current balance
+- `POST /api/creator/request-payout` - Request payout
+- `GET /api/creator/payouts` - Payout history
 
 ## Database Schema
 
@@ -104,8 +112,12 @@ Build a music sample marketplace called "SoundDrops" with:
   "email": "string",
   "name": "string",
   "role": "admin|creator|user",
-  "creator_approved": "boolean",
-  "created_at": "datetime"
+  "payout_info": {
+    "payout_method": "paypal|debit_card|bank_transfer",
+    "paypal_email": "string",
+    "card_last_four": "string",
+    "bank_account_last_four": "string"
+  }
 }
 ```
 
@@ -114,48 +126,42 @@ Build a music sample marketplace called "SoundDrops" with:
 {
   "pack_id": "pack_xxx",
   "title": "string",
-  "description": "string",
-  "category": "Drums|Bass|Synths|FX|Vocals|Loops",
-  "price": "float",
-  "is_free": "boolean",
-  "is_featured": "boolean",
-  "is_sync_ready": "boolean",
-  "sync_type": "Sports|Film|Cinematic|Broadcast",
-  "bpm": "int",
-  "key": "string",
-  "file_type": "audio|zip",
   "cover_image_path": "string",
   "preview_audio_path": "string",
-  "creator_id": "string",
-  "created_at": "datetime"
+  "is_featured": "boolean",
+  "is_sync_ready": "boolean",
+  "bpm": "int",
+  "key": "string"
 }
 ```
 
-## Environment Variables
-
-### Backend (/app/backend/.env)
-- MONGO_URL
-- DB_NAME
-- STRIPE_API_KEY
-- ADMIN_EMAIL (lambeaullc@gmail.com)
-
-### Frontend (/app/frontend/.env)
-- REACT_APP_BACKEND_URL
+### payouts
+```json
+{
+  "payout_id": "payout_xxx",
+  "creator_id": "string",
+  "amount": "float",
+  "method": "paypal|debit_card|bank_transfer",
+  "status": "pending|processing|completed",
+  "is_instant": "boolean"
+}
+```
 
 ## Testing Status
 - Backend: All endpoints working
-- Frontend: Functional
-- Deployment: Ready (environment files configured)
-- Last tested: January 1, 2026
+- Frontend: Functional with waveform player
+- Deployment: Ready
+- Last tested: January 2, 2026
 
 ## Known Issues
-- Stripe payments are MOCKED (test mode)
-- Admin redirect after login needs user verification
+- Admin redirect after login needs verification
 
 ## Files Reference
 - `/app/backend/server.py` - Main backend
 - `/app/frontend/src/pages/AdminDashboard.js` - Admin UI
 - `/app/frontend/src/pages/Creator.js` - Creator UI
 - `/app/frontend/src/pages/PackDetail.js` - Pack detail page
-- `/app/frontend/src/pages/Home.js` - Homepage with audio preview
-- `/app/frontend/src/utils/api.js` - API functions
+- `/app/frontend/src/pages/Home.js` - Homepage with waveform
+- `/app/frontend/src/components/audio/MiniWaveformPlayer.js` - Inline waveform
+- `/app/frontend/src/components/audio/WaveformPlayer.js` - Full waveform
+- `/app/frontend/src/components/layout/Navbar.js` - Navigation
