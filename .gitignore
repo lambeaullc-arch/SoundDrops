@@ -103,3 +103,7 @@ backend/zip_files/pack_741018d7037c.zip
 # Environment files
 *.env
 *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
